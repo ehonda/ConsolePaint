@@ -1,4 +1,7 @@
-﻿namespace ConsolePaint.Controls;
+﻿using Ardalis.GuardClauses;
+using ConsolePaint.Extensions;
+
+namespace ConsolePaint.Controls;
 
 public class Cursor
 {
@@ -10,6 +13,11 @@ public class Cursor
 
     public Cursor(int x, int y, int xLimit, int yLimit)
     {
+        Guard.Against.OutOfRange(xLimit, nameof(xLimit), 0, int.MaxValue);
+        Guard.Against.OutOfRange(yLimit, nameof(yLimit), 0, int.MaxValue);
+        Guard.Against.OutOfRange(x, nameof(x), 0, xLimit);
+        Guard.Against.OutOfRange(y, nameof(y), 0, yLimit);
+        
         X = x;
         Y = y;
         _xLimit = xLimit;
@@ -33,13 +41,10 @@ public class Cursor
 
         if (direction is Direction.Up or Direction.Down)
         {
-            Y = AddModular(Y, step, _yLimit);
+            Y = Y.AddModulo(step, _yLimit);
             return;
         }
 
-        X = AddModular(X, step, _xLimit);
+        X = X.AddModulo(step, _xLimit);
     }
-
-    private int AddModular(int a, int b, int n)
-        => (a + b + n) % n;
 }
