@@ -50,4 +50,68 @@ public class CursorTests
         Func<Cursor> creatingCursor = () => new(0, y, 1, 1);
         creatingCursor.Should().Throw<ArgumentException>().WithMessage("*y*");
     }
+
+    [Test]
+    public void Cursor_moves_upwards_cyclically()
+    {
+        var cursor = new Cursor(0, 3);
+        cursor.Y.Should().Be(0);
+        
+        cursor.Move(Direction.Up);
+        cursor.Y.Should().Be(1);
+        
+        cursor.Move(Direction.Up);
+        cursor.Y.Should().Be(2);
+        
+        cursor.Move(Direction.Up);
+        cursor.Y.Should().Be(0);
+    }
+    
+    [Test]
+    public void Cursor_moves_downwards_cyclically()
+    {
+        var cursor = new Cursor(0, 3);
+        cursor.Y.Should().Be(0);
+        
+        cursor.Move(Direction.Down);
+        cursor.Y.Should().Be(2);
+        
+        cursor.Move(Direction.Down);
+        cursor.Y.Should().Be(1);
+        
+        cursor.Move(Direction.Down);
+        cursor.Y.Should().Be(0);
+    }
+    
+    [Test]
+    public void Cursor_moves_to_the_right_cyclically()
+    {
+        var cursor = new Cursor(3, 0);
+        cursor.X.Should().Be(0);
+        
+        cursor.Move(Direction.Right);
+        cursor.X.Should().Be(1);
+        
+        cursor.Move(Direction.Right);
+        cursor.X.Should().Be(2);
+        
+        cursor.Move(Direction.Right);
+        cursor.X.Should().Be(0);
+    }
+    
+    [Test]
+    public void Cursor_moves_to_the_left_cyclically()
+    {
+        var cursor = new Cursor(3, 0);
+        cursor.X.Should().Be(0);
+        
+        cursor.Move(Direction.Left);
+        cursor.X.Should().Be(2);
+        
+        cursor.Move(Direction.Left);
+        cursor.X.Should().Be(1);
+        
+        cursor.Move(Direction.Left);
+        cursor.X.Should().Be(0);
+    }
 }

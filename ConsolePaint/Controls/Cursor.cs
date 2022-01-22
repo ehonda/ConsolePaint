@@ -3,6 +3,7 @@ using ConsolePaint.Extensions;
 
 namespace ConsolePaint.Controls;
 
+// TODO: Rename to CyclicCursor, make non-cyclic version?
 public class Cursor
 {
     public int X { get; private set; }
