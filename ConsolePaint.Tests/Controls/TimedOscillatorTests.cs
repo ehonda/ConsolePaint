@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace ConsolePaint.Tests.Controls;
 
-// TODO: Better way to resolve name clashes
+// TODO: Better way to resolve name clashes (partial class Fluent, inner static class NamedTimedState?)
 using FluentNamedTimedState = ConsolePaint.TestUtilities.Fluent.Controls.NamedTimedState;
 
 [TestFixture]

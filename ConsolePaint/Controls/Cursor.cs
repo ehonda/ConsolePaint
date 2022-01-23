@@ -1,5 +1,5 @@
 ﻿using Ardalis.GuardClauses;
-using ConsolePaint.Extensions;
+using ConsolePaint.Math.Extensions;
 
 namespace ConsolePaint.Controls;
 

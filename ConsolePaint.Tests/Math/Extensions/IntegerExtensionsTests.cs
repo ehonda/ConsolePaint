@@ -1,8 +1,8 @@
-﻿using ConsolePaint.Extensions;
+﻿using ConsolePaint.Math.Extensions;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ConsolePaint.Tests.Extensions;
+namespace ConsolePaint.Tests.Math.Extensions;
 
 [TestFixture]
 public class IntegerExtensionsTests

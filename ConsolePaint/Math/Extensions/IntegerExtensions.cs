@@ -1,4 +1,4 @@
-﻿namespace ConsolePaint.Extensions;
+﻿namespace ConsolePaint.Math.Extensions;
 
 public static class IntegerExtensions
 {
