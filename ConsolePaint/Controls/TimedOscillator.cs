@@ -16,6 +16,12 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
 
     private TimeSpan _timePassedInPeriod = TimeSpan.Zero;
 
+    public TimedOscillator(params TTimedState[] states)
+        : this(states.ToImmutableArray())
+    {
+        
+    }
+
     public TimedOscillator(IEnumerable<TTimedState> states)
     {
         _states = states.ToImmutableArray();

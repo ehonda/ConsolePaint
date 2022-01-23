@@ -7,6 +7,9 @@ using NUnit.Framework;
 
 namespace ConsolePaint.Tests.Controls;
 
+// TODO: Better way to resolve name clashes
+using FluentNamedTimedState = ConsolePaint.TestUtilities.Fluent.Controls.NamedTimedState;
+
 [TestFixture]
 public class TimedOscillatorTests
 {
@@ -26,22 +29,10 @@ public class TimedOscillatorTests
     [TestCaseSource(nameof(ElapsedTimeIsTooSmallTestCaseSource))]
     public void Oscillator_stays_in_the_same_state_if_elapsed_time_is_too_small(TimeSpan elapsed)
     {
-        var stateA = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "A"
-        };
-        var stateB = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "B"
-        };
+        var stateA = FluentNamedTimedState.Lasting(3).WithName("A").Create();
+        var stateB = FluentNamedTimedState.Lasting(3).WithName("B").Create();
         
-        var oscillator = new TimedOscillator<NamedTimedState>(new[]
-        {
-            stateA,
-            stateB
-        });
+        var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB);
 
         oscillator.GetCurrentState(elapsed).Should().Be(stateA);
     }
@@ -49,22 +40,10 @@ public class TimedOscillatorTests
     [Test]
     public void Oscillator_flips_from_one_state_to_the_other_cyclically()
     {
-        var stateA = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "A"
-        };
-        var stateB = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "B"
-        };
+        var stateA = FluentNamedTimedState.Lasting(3).WithName("A").Create();
+        var stateB = FluentNamedTimedState.Lasting(3).WithName("B").Create();
         
-        var oscillator = new TimedOscillator<NamedTimedState>(new[]
-        {
-            stateA,
-            stateB
-        });
+        var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB);
 
         oscillator.GetCurrentState(TimeSpan.FromTicks(0)).Should().Be(stateA);
         oscillator.GetCurrentState(TimeSpan.FromTicks(4)).Should().Be(stateB);
@@ -75,28 +54,11 @@ public class TimedOscillatorTests
     [Test]
     public void Oscillator_skips_a_state()
     {
-        var stateA = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "A"
-        };
-        var stateB = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "B"
-        };
-        var stateC = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "C"
-        };
+        var stateA = FluentNamedTimedState.Lasting(3).WithName("A").Create();
+        var stateB = FluentNamedTimedState.Lasting(3).WithName("B").Create();
+        var stateC = FluentNamedTimedState.Lasting(3).WithName("C").Create();
         
-        var oscillator = new TimedOscillator<NamedTimedState>(new[]
-        {
-            stateA,
-            stateB,
-            stateC
-        });
+        var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB, stateC);
 
         oscillator.GetCurrentState(TimeSpan.FromTicks(7)).Should().Be(stateC);
     }
@@ -104,34 +66,12 @@ public class TimedOscillatorTests
     [Test]
     public void Oscillator_moves_a_full_period()
     {
-        var stateA = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "A"
-        };
-        var stateB = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "B"
-        };
-        var stateC = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "C"
-        };
-        var stateD = new NamedTimedState
-        {
-            LastsFor = TimeSpan.FromTicks(3),
-            Name = "D"
-        };
+        var stateA = FluentNamedTimedState.Lasting(3).WithName("A").Create();
+        var stateB = FluentNamedTimedState.Lasting(3).WithName("B").Create();
+        var stateC = FluentNamedTimedState.Lasting(3).WithName("C").Create();
+        var stateD = FluentNamedTimedState.Lasting(3).WithName("D").Create();
         
-        var oscillator = new TimedOscillator<NamedTimedState>(new[]
-        {
-            stateA,
-            stateB,
-            stateC,
-            stateD
-        });
+        var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB, stateC, stateD);
 
         oscillator.GetCurrentState(TimeSpan.FromTicks(19)).Should().Be(stateC);
     }
