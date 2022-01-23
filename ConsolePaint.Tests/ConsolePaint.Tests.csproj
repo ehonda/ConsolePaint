@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ConsolePaint.TestUtilities\ConsolePaint.TestUtilities.csproj" />
     <ProjectReference Include="..\ConsolePaint\ConsolePaint.csproj" />
   </ItemGroup>
 

@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ConsolePaint.Controls;
+using ConsolePaint.TestUtilities.Controls;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace ConsolePaint.Tests.Controls;
-
-// TODO: MOVE!
-class NamedTimedState : TimedState
-{
-    public string Name { get; set; } = string.Empty;
-}
 
 [TestFixture]
 public class TimedOscillatorTests

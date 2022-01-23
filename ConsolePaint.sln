@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolePaint", "ConsolePain
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolePaint.Tests", "ConsolePaint.Tests\ConsolePaint.Tests.csproj", "{FDA3CB63-A066-4B02-9A2C-257DA2DE8C17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolePaint.TestUtilities", "ConsolePaint.TestUtilities\ConsolePaint.TestUtilities.csproj", "{253BE278-114E-427E-ADB2-6E079585260D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{FDA3CB63-A066-4B02-9A2C-257DA2DE8C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDA3CB63-A066-4B02-9A2C-257DA2DE8C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDA3CB63-A066-4B02-9A2C-257DA2DE8C17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{253BE278-114E-427E-ADB2-6E079585260D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{253BE278-114E-427E-ADB2-6E079585260D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{253BE278-114E-427E-ADB2-6E079585260D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{253BE278-114E-427E-ADB2-6E079585260D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
