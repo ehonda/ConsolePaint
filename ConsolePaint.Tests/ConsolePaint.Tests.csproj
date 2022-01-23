@@ -20,8 +20,4 @@
     <ProjectReference Include="..\ConsolePaint\ConsolePaint.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Math" />
-  </ItemGroup>
-
 </Project>

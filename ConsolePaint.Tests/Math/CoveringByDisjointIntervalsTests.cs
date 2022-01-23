@@ -1,0 +1,104 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ConsolePaint.Math;
+using FluentAssertions;
+using NUnit.Framework;
+
+namespace ConsolePaint.Tests.Math;
+
+[TestFixture]
+public class CoveringByDisjointIntervalsTests
+{
+    private static IEnumerable<Func<CoveringByDisjointIntervals<double>>>
+        ConstructionGuardsAgainstNullIntervalsTestCaseSource
+        => new Func<CoveringByDisjointIntervals<double>>[]
+        {
+            () => new(null!),
+            () => new((null as IEnumerable<(double, double)>)!)
+        };
+
+    [TestCaseSource(nameof(ConstructionGuardsAgainstNullIntervalsTestCaseSource))]
+    public void Construction_guards_against_null_intervals(
+        Func<CoveringByDisjointIntervals<double>> construction)
+    {
+        construction.Should().Throw<ArgumentNullException>().WithMessage("*intervals*");
+    }
+
+    private static IEnumerable<Func<CoveringByDisjointIntervals<double>>>
+        ConstructionGuardsAgainstEmptyIntervalsTestCaseSource
+        => new Func<CoveringByDisjointIntervals<double>>[]
+        {
+            () => new(),
+            () => new(Enumerable.Empty<(double, double)>())
+        };
+
+    [TestCaseSource(nameof(ConstructionGuardsAgainstEmptyIntervalsTestCaseSource))]
+    public void Construction_guards_against_empty_intervals(
+        Func<CoveringByDisjointIntervals<double>> construction)
+    {
+        construction.Should().Throw<ArgumentException>().WithMessage("*intervals*");
+    }
+
+    [Test]
+    public void Construction_guards_against_non_continuous_intervals()
+    {
+        var construction = () => new CoveringByDisjointIntervals<double>(
+            (0, 1), (2, 3));
+
+        construction.Should().Throw<InvalidOperationException>()
+            .WithMessage("*discontinuous intervals*");
+    }
+    
+    [Test]
+    public void Start_of_Covering_is_First_Interval_Start()
+    {
+        var covering = new CoveringByDisjointIntervals<double>((0, 1), (1, 2));
+        covering.Start.Should().Be(0d);
+    }
+
+    [Test]
+    public void End_of_Covering_is_Last_Interval_End()
+    {
+        var covering = new CoveringByDisjointIntervals<double>((0, 1), (1, 2));
+        covering.End.Should().Be(2d);
+    }
+    
+    [Test]
+    public void Construction_orders_intervals()
+    {
+        var covering = new CoveringByDisjointIntervals<double>(
+            (3, 4), (1, 2), (0, 1), (2, 3));
+
+        covering.GetCover(0).Index.Should().Be(0);
+        covering.GetCover(1).Index.Should().Be(1);
+        covering.GetCover(2).Index.Should().Be(2);
+        covering.GetCover(3).Index.Should().Be(3);
+    }
+
+    [TestCase(-1)]
+    [TestCase(2)]
+    public void GetCover_guards_against_argument_out_of_range(double element)
+    {
+        var covering = new CoveringByDisjointIntervals<double>((0, 1));
+
+        var getCover = () => covering.GetCover(element);
+        getCover.Should().Throw<ArgumentOutOfRangeException>().WithMessage("*element*");
+    }
+
+    [Test]
+    public void GetCover_works_with_right_open_intervals()
+    {
+        var covering = new CoveringByDisjointIntervals<double>((0, 1), (1, 2));
+
+        var coverA = covering.GetCover(0.5);
+        coverA.Interval.Start.Should().Be(0d);
+        coverA.Interval.End.Should().Be(1d);
+        coverA.Index.Should().Be(0);
+
+        var coverB = covering.GetCover(1);
+        coverB.Interval.Start.Should().Be(1d);
+        coverB.Interval.End.Should().Be(2d);
+        coverB.Index.Should().Be(1);
+    }
+}
