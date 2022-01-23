@@ -101,4 +101,40 @@ public class CoveringByDisjointIntervalsTests
         coverB.Interval.End.Should().Be(2d);
         coverB.Index.Should().Be(1);
     }
+
+    // [Test]
+    // public void FromIntervalLengths_guards_against_non_positive_lengths()
+    // {
+    //     var construction = () => CoveringByDisjointIntervals<double>.FromIntervalLengths(
+    //         0,
+    //         (a, b) => a + b,
+    //         -1);
+    //
+    //     construction.Should().Throw<InvalidOperationException>()
+    //         .WithMessage("non-positive lengths");
+    // }
+
+    [Test]
+    public void FromIntervalLengths_constructs_intervals_from_provided_lengths()
+    {
+        var covering = CoveringByDisjointIntervals<double>.FromIntervalLengths(
+            0,
+            (a, b) => a + b,
+            1, 2, 3);
+
+        var coverA = covering.GetCover(0);
+        coverA.Interval.Start.Should().Be(0d);
+        coverA.Interval.End.Should().Be(1d);
+        coverA.Index.Should().Be(0);
+        
+        var coverB = covering.GetCover(1);
+        coverB.Interval.Start.Should().Be(1d);
+        coverB.Interval.End.Should().Be(3d);
+        coverB.Index.Should().Be(1);
+        
+        var coverC = covering.GetCover(3);
+        coverC.Interval.Start.Should().Be(3d);
+        coverC.Interval.End.Should().Be(6d);
+        coverC.Index.Should().Be(2);
+    }
 }

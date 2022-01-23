@@ -44,6 +44,36 @@ public class CoveringByDisjointIntervals<TElement>
     public TElement Start => _covering.First().Interval.Start;
     public TElement End => _covering.Last().Interval.End;
 
+    public static CoveringByDisjointIntervals<TElement> FromIntervalLengths(
+        TElement start, Func<TElement, TElement, TElement> addElements, params TElement[] lengths)
+        => FromIntervalLengths(start, addElements, lengths.ToImmutableArray());
+    
+    // TODO: Check lengths > 0
+    // TODO: Check null or empty
+    public static CoveringByDisjointIntervals<TElement> FromIntervalLengths(
+        TElement start, Func<TElement, TElement, TElement> addElements, IEnumerable<TElement> lengths)
+    {
+        // TODO: Can we use IEnumerable here instead of List?
+        var starts = lengths
+            .Aggregate(
+                new List<TElement> { start },
+                (starts, length) =>
+                {
+                    starts.Add(addElements(starts.Last(), length));
+                    return starts;
+                });
+
+        var intervals = starts
+            .Zip(starts.Skip(1))
+            .Select(tuple => (Start: tuple.First, End: tuple.Second))
+            .ToImmutableArray();
+        //
+        // if (intervals.Any(interval => interval.Start.IsGreaterThanOrEqualTo(interval.End)))
+        //     throw new 
+        
+        return new(intervals);
+    }
+
     // TODO: Binary search for more efficiency
     public ((TElement Start, TElement End) Interval, int Index) GetCover(TElement element)
     {
