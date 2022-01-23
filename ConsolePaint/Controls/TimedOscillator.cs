@@ -9,7 +9,7 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
 {
     private readonly ImmutableArray<TTimedState> _states;
     
-    private TimeSpan _timePointInPeriod = TimeSpan.Zero;
+    private TimeSpan _timePassedInPeriod = TimeSpan.Zero;
     
     // TODO: Use cyclic enumerable enumerator
     private int _currentStateIndex;
@@ -49,16 +49,16 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
     // TODO: How do we call the time deltas?
     public TTimedState GetCurrentState(TimeSpan elapsedTimeSinceLastFrame)
     {
-        var periods = elapsedTimeSinceLastFrame / _periodLength;
+        var periods = (int)(elapsedTimeSinceLastFrame / _periodLength);
 
-        _timePointInPeriod += elapsedTimeSinceLastFrame - periods * _periodLength;
+        _timePassedInPeriod += elapsedTimeSinceLastFrame - periods * _periodLength;
 
-        if (_timePointInPeriod > _periodLength)
-            _timePointInPeriod -= _periodLength;
+        if (_timePassedInPeriod >= _periodLength)
+            _timePassedInPeriod -= _periodLength;
         
         _currentStateIndex = _indexMap.First(tuple
-            => tuple.Key.Start <= _timePointInPeriod
-               && _timePointInPeriod < tuple.Key.End).Value;
+            => tuple.Key.Start <= _timePassedInPeriod
+               && _timePassedInPeriod < tuple.Key.End).Value;
 
         return CurrentState;
     }

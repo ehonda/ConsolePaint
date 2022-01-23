@@ -74,7 +74,7 @@ public class TimedOscillatorTests
         oscillator.GetCurrentState(TimeSpan.FromTicks(0)).Should().Be(stateA);
         oscillator.GetCurrentState(TimeSpan.FromTicks(4)).Should().Be(stateB);
         oscillator.GetCurrentState(TimeSpan.FromTicks(4)).Should().Be(stateA);
-        oscillator.GetCurrentState(TimeSpan.FromTicks(4)).Should().Be(stateB);
+        oscillator.GetCurrentState(TimeSpan.FromTicks(3)).Should().Be(stateB);
     }
     
     [Test]
@@ -138,6 +138,6 @@ public class TimedOscillatorTests
             stateD
         });
 
-        oscillator.GetCurrentState(TimeSpan.FromTicks(16)).Should().Be(stateC);
+        oscillator.GetCurrentState(TimeSpan.FromTicks(19)).Should().Be(stateC);
     }
 }
