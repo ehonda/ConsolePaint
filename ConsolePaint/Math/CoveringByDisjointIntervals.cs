@@ -4,8 +4,7 @@ using ConsolePaint.Math.Extensions;
 
 namespace ConsolePaint.Math;
 
-// TODO: Documentation - Intervals are right open - [a, b), [b, c), ...
-public class CoveringByDisjointIntervals<TElement>
+public class CoveringByDisjointIntervals<TElement> : ICoveringByDisjointIntervals<TElement>
     where TElement : IComparable, IComparable<TElement>
 {
     private readonly ImmutableArray<((TElement Start, TElement End) Interval, int Index)> _covering;
