@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using ConsolePaint.Math;
 using FluentAssertions;
@@ -49,7 +50,38 @@ public class CoveringByDisjointIntervalsTests
         construction.Should().Throw<InvalidOperationException>()
             .WithMessage("*discontinuous intervals*");
     }
-    
+
+    private static IEnumerable<Func<CoveringByDisjointIntervals<double>>> Constructors(
+        params (double, double)[] intervals)
+        => new Func<CoveringByDisjointIntervals<double>>[]
+        {
+            () => new(intervals),
+            () => new(intervals.ToImmutableArray())
+        };
+
+    private static ImmutableArray<IEnumerable<(double Start, double End)>> IntervalsWithStartGreaterThanOrEqualToEnd
+        => new[]
+            {
+                new (double Start, double End)[] { (0, 0) },
+                new (double Start, double End)[] { (0, -1) },
+                new (double Start, double End)[] { (0, 1), (1, 0) }
+            }
+            .Select(array => array.AsEnumerable())
+            .ToImmutableArray();
+
+    private static IEnumerable<Func<CoveringByDisjointIntervals<double>>>
+        ConstructionGuardsAgainstIntervalsWithStartGreaterThanOrEqualToEndTestCaseSource
+        => IntervalsWithStartGreaterThanOrEqualToEnd
+            .SelectMany(intervals => Constructors(intervals.ToArray()));
+
+    [TestCaseSource(nameof(ConstructionGuardsAgainstIntervalsWithStartGreaterThanOrEqualToEndTestCaseSource))]
+    public void Construction_guards_against_intervals_with_start_greater_than_or_equal_to_end(
+        Func<CoveringByDisjointIntervals<double>> construction)
+    {
+        construction.Should().Throw<InvalidOperationException>()
+            .WithMessage("*intervals with start lower than or equal to end*");
+    }
+
     [Test]
     public void Start_of_Covering_is_First_Interval_Start()
     {
@@ -63,7 +95,7 @@ public class CoveringByDisjointIntervalsTests
         var covering = new CoveringByDisjointIntervals<double>((0, 1), (1, 2));
         covering.End.Should().Be(2d);
     }
-    
+
     [Test]
     public void Construction_orders_intervals()
     {
@@ -102,18 +134,6 @@ public class CoveringByDisjointIntervalsTests
         coverB.Index.Should().Be(1);
     }
 
-    // [Test]
-    // public void FromIntervalLengths_guards_against_non_positive_lengths()
-    // {
-    //     var construction = () => CoveringByDisjointIntervals<double>.FromIntervalLengths(
-    //         0,
-    //         (a, b) => a + b,
-    //         -1);
-    //
-    //     construction.Should().Throw<InvalidOperationException>()
-    //         .WithMessage("non-positive lengths");
-    // }
-
     [Test]
     public void FromIntervalLengths_constructs_intervals_from_provided_lengths()
     {
@@ -126,12 +146,12 @@ public class CoveringByDisjointIntervalsTests
         coverA.Interval.Start.Should().Be(0d);
         coverA.Interval.End.Should().Be(1d);
         coverA.Index.Should().Be(0);
-        
+
         var coverB = covering.GetCover(1);
         coverB.Interval.Start.Should().Be(1d);
         coverB.Interval.End.Should().Be(3d);
         coverB.Index.Should().Be(1);
-        
+
         var coverC = covering.GetCover(3);
         coverC.Interval.Start.Should().Be(3d);
         coverC.Interval.End.Should().Be(6d);

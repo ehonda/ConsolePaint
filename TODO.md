@@ -1,8 +1,7 @@
 __TODO__
 
-* Better fluent syntax in `TimedOscillatorTests`
-    * `Fluent.NamedTimedState`
-* Check `a < b` for all intervals used in interval covering construction
+* Periodic version of covering
+* Guard against null in `FromIntervalLengths`
 * `CoveringByDisjointIntervals<TimeSpan>.FromIntervalLengths() -> CoveringByDisjointIntervals.FromIntervalLengths()` possible?
 * Refactor timed oscillator
 * Resolve `TODO` comments

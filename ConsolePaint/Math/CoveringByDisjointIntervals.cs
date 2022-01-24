@@ -26,6 +26,10 @@ public class CoveringByDisjointIntervals<TElement>
         // ReSharper disable once PossibleMultipleEnumeration
         var intervalsEnumerated = intervals.ToImmutableArray();
 
+        if (intervalsEnumerated.Any(interval => interval.Start.IsGreaterThanOrEqualTo(interval.End)))
+            throw new InvalidOperationException(
+                "Can't construct covering by disjoint intervals from intervals with start lower than or equal to end");
+
         Guard.Against.NullOrEmpty(intervalsEnumerated, nameof(intervals));
         _covering = intervalsEnumerated
             .OrderBy(tuple => tuple.Start)
@@ -47,9 +51,8 @@ public class CoveringByDisjointIntervals<TElement>
     public static CoveringByDisjointIntervals<TElement> FromIntervalLengths(
         TElement start, Func<TElement, TElement, TElement> addElements, params TElement[] lengths)
         => FromIntervalLengths(start, addElements, lengths.ToImmutableArray());
-    
-    // TODO: Check lengths > 0
-    // TODO: Check null or empty
+
+    // TODO: Check null
     public static CoveringByDisjointIntervals<TElement> FromIntervalLengths(
         TElement start, Func<TElement, TElement, TElement> addElements, IEnumerable<TElement> lengths)
     {
@@ -67,10 +70,7 @@ public class CoveringByDisjointIntervals<TElement>
             .Zip(starts.Skip(1))
             .Select(tuple => (Start: tuple.First, End: tuple.Second))
             .ToImmutableArray();
-        //
-        // if (intervals.Any(interval => interval.Start.IsGreaterThanOrEqualTo(interval.End)))
-        //     throw new 
-        
+
         return new(intervals);
     }
 
