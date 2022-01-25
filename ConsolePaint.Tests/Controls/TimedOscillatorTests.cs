@@ -31,7 +31,7 @@ public class TimedOscillatorTests
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB);
 
-        oscillator.GetCurrentState(elapsed).Should().Be(stateA);
+        oscillator.Step(elapsed).Should().Be(stateA);
     }
 
     [Test]
@@ -42,10 +42,10 @@ public class TimedOscillatorTests
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB);
 
-        oscillator.GetCurrentState(TimeSpan.FromTicks(0)).Should().Be(stateA);
-        oscillator.GetCurrentState(TimeSpan.FromTicks(4)).Should().Be(stateB);
-        oscillator.GetCurrentState(TimeSpan.FromTicks(4)).Should().Be(stateA);
-        oscillator.GetCurrentState(TimeSpan.FromTicks(3)).Should().Be(stateB);
+        oscillator.Step(TimeSpan.FromTicks(0)).Should().Be(stateA);
+        oscillator.Step(TimeSpan.FromTicks(4)).Should().Be(stateB);
+        oscillator.Step(TimeSpan.FromTicks(4)).Should().Be(stateA);
+        oscillator.Step(TimeSpan.FromTicks(3)).Should().Be(stateB);
     }
     
     [Test]
@@ -57,7 +57,7 @@ public class TimedOscillatorTests
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB, stateC);
 
-        oscillator.GetCurrentState(TimeSpan.FromTicks(7)).Should().Be(stateC);
+        oscillator.Step(TimeSpan.FromTicks(7)).Should().Be(stateC);
     }
     
     [Test]
@@ -70,6 +70,6 @@ public class TimedOscillatorTests
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB, stateC, stateD);
 
-        oscillator.GetCurrentState(TimeSpan.FromTicks(19)).Should().Be(stateC);
+        oscillator.Step(TimeSpan.FromTicks(19)).Should().Be(stateC);
     }
 }

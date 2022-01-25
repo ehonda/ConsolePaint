@@ -3,18 +3,18 @@ using ConsolePaint.Math;
 
 namespace ConsolePaint.Controls;
 
-// TODO: States immutable, oscillator tracks elapsed? We don't want to be able to initialize
-// TODO: with states that have elapsed time, nor do we want the outside to be able to advance time in state 
 public class TimedOscillator<TTimedState> where TTimedState : TimedState
 {
-    private readonly CoveringByDisjointIntervals<TimeSpan> _covering;
+    private readonly ICoveringByDisjointIntervals<TimeSpan> _covering;
 
-    private readonly TimeSpan _periodLength;
     private readonly ImmutableArray<TTimedState> _states;
 
     private int _currentStateIndex;
 
-    private TimeSpan _timePassedInPeriod = TimeSpan.Zero;
+    // TODO: Do we really want / need to save time passed since beginning?
+    private TimeSpan _timePassed = TimeSpan.Zero;
+
+    public TTimedState CurrentState => _states[_currentStateIndex];
 
     public TimedOscillator(params TTimedState[] states)
         : this(states.ToImmutableArray())
@@ -24,29 +24,26 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
     public TimedOscillator(IEnumerable<TTimedState> states)
     {
         _states = states.ToImmutableArray();
-        
-        _covering = CoveringByDisjointIntervals<TimeSpan>
+
+        var covering = CoveringByDisjointIntervals<TimeSpan>
             .FromIntervalLengths(
                 TimeSpan.Zero,
                 (t, s) => t + s,
                 _states.Select(state => state.LastsFor));
 
-        _periodLength = _covering.End;
+        _covering = new PeriodicCoveringByDisjointIntervals<TimeSpan>(
+            covering,
+            (t, s) => t - s,
+            (t, s) => t / s,
+            (d, t) => d * t);
     }
-
-    private TTimedState CurrentState => _states[_currentStateIndex];
-
-    // TODO: How do we call the time deltas?
-    public TTimedState GetCurrentState(TimeSpan elapsedTimeSinceLastFrame)
+    
+    // TODO: Do we want to pass time since simulation started instead?
+    public TTimedState Step(TimeSpan elapsedTimeSinceLastFrame)
     {
-        var periods = (int) (elapsedTimeSinceLastFrame / _periodLength);
+        _timePassed += elapsedTimeSinceLastFrame;
 
-        _timePassedInPeriod += elapsedTimeSinceLastFrame - periods * _periodLength;
-
-        if (_timePassedInPeriod >= _periodLength)
-            _timePassedInPeriod -= _periodLength;
-        
-        _currentStateIndex = _covering.GetCover(_timePassedInPeriod).Index;
+        _currentStateIndex = _covering.GetCover(_timePassed).Index;
 
         return CurrentState;
     }
