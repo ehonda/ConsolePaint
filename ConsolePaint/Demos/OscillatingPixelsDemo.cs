@@ -1,29 +1,51 @@
-﻿using ConsolePaint.Controls;
+﻿using System.Collections.Immutable;
 using Spectre.Console;
 
 namespace ConsolePaint.Demos;
 
-// TODO: Add input queue
-public class BlinkingCursorDemo
+public class OscillatingPixelsDemo
 {
-    private readonly BlinkingCursor _cursor;
-    private readonly Canvas _canvas;
-    
-    private readonly Color _background = Color.Gold3;
+    private readonly Canvas _canvas = new(3, 3);
+
+    private readonly ImmutableArray<OscillatingPixel> _pixels;
 
     private bool _running = true;
-    
-    public BlinkingCursorDemo(int xLimit, int yLimit, TimeSpan offFor, TimeSpan onFor)
+
+    public OscillatingPixelsDemo()
     {
-        _cursor = new(xLimit, yLimit, offFor, onFor, Color.Red3);
-        _canvas = new(xLimit, yLimit);
+        var states = ImmutableArray.Create<ColoredTimedState>(
+            new()
+            {
+                Color = Color.Black,
+                LastsFor = TimeSpan.FromMilliseconds(500)
+            },
+            new()
+            {
+                Color = Color.White,
+                LastsFor = TimeSpan.FromMilliseconds(500)
+            });
+
+        var statesInverted = states.Reverse().ToImmutableArray();
+
+        _pixels = Enumerable
+            .Range(0, 3)
+            .Zip(Enumerable
+                .Range(0, 3))
+            .Select(tuple => (X: tuple.First, Y: tuple.Second))
+            .Select(tuple => new OscillatingPixel(
+                tuple.X,
+                tuple.Y,
+                (tuple.X + tuple.Y) % 2 == 0
+                    ? states
+                    : statesInverted))
+            .ToImmutableArray();
     }
 
     public async Task Run()
     {
         AnsiConsole.Clear();
         AnsiConsole.Cursor.Hide();
-        
+
         var lastRender = DateTimeOffset.UtcNow;
         while (_running)
         {
@@ -54,22 +76,6 @@ public class BlinkingCursorDemo
                 case ConsoleKey.Escape:
                     _running = false;
                     break;
-                
-                case ConsoleKey.UpArrow:
-                    _cursor.Move(Direction.Down);
-                    break;
-                
-                case ConsoleKey.DownArrow:
-                    _cursor.Move(Direction.Up);
-                    break;
-                
-                case ConsoleKey.RightArrow:
-                    _cursor.Move(Direction.Right);
-                    break;
-                
-                case ConsoleKey.LeftArrow:
-                    _cursor.Move(Direction.Left);
-                    break;
             }
         }
     }
@@ -78,25 +84,20 @@ public class BlinkingCursorDemo
     {
         AnsiConsole.Cursor.SetPosition(0, 0);
         DrawBackground();
-        DrawCursor(elapsed);
+        DrawPixels(elapsed);
         AnsiConsole.Write(new Panel(_canvas).RoundedBorder().Header("Game"));
-        AnsiConsole.Write(new Panel("Command").RoundedBorder().Header("Console"));
         return Task.CompletedTask;
     }
 
-    private void DrawCursor(TimeSpan elapsed)
+    private void DrawPixels(TimeSpan elapsed)
     {
-        _cursor.Render(_canvas, elapsed);
+        foreach (var pixel in _pixels) pixel.Render(_canvas, elapsed);
     }
-    
+
     private void DrawBackground()
     {
-        for (int x = 0; x < _canvas.Width; x++)
-        {
-            for (int y = 0; y < _canvas.Height; y++)
-            {
-                _canvas.SetPixel(x, y, _background);
-            }
-        }
+        for (var x = 0; x < _canvas.Width; x++)
+        for (var y = 0; y < _canvas.Height; y++)
+            _canvas.SetPixel(x, y, Color.Black);
     }
 }
