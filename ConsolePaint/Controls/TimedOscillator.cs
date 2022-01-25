@@ -26,11 +26,10 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
     {
         _states = states.ToImmutableArray();
 
-        var covering = CoveringByDisjointIntervals<TimeSpan>
-            .FromIntervalLengths(
-                TimeSpan.Zero,
-                (t, s) => t + s,
-                _states.Select(state => state.LastsFor));
+        var covering = CoveringByDisjointIntervals.FromIntervalLengths(
+            TimeSpan.Zero,
+            (t, s) => t + s,
+            _states.Select(state => state.LastsFor));
 
         _covering = new PeriodicCoveringByDisjointIntervals<TimeSpan>(
             covering,

@@ -137,8 +137,8 @@ public class CoveringByDisjointIntervalsTests
     [Test]
     public void FromIntervalLengths_constructs_intervals_from_provided_lengths()
     {
-        var covering = CoveringByDisjointIntervals<double>.FromIntervalLengths(
-            0,
+        var covering = CoveringByDisjointIntervals.FromIntervalLengths(
+            0d,
             (a, b) => a + b,
             1, 2, 3);
 
