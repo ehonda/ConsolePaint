@@ -14,6 +14,7 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
     // TODO: Do we really want / need to save time passed since beginning?
     private TimeSpan _timePassed = TimeSpan.Zero;
 
+    // TODO:
     public TTimedState CurrentState => _states[_currentStateIndex];
 
     public TimedOscillator(params TTimedState[] states)
@@ -39,6 +40,9 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
     }
     
     // TODO: Do we want to pass time since simulation started instead?
+    
+    // TODO: The way this is implemented, it has the visible side effect of "advancing time"
+    // TODO: when called -> Bad if we want to use the result twice -> argument for passing time since beginning
     public TTimedState Step(TimeSpan elapsedTimeSinceLastFrame)
     {
         _timePassed += elapsedTimeSinceLastFrame;

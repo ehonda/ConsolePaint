@@ -7,5 +7,6 @@ namespace ConsolePaint.Controls;
 public interface IRenderable
 {
     // TODO: Use something else than Canvas, e.g. Screen class here
+    // TODO: Pass time delta or time since beginning?
     public void Render(Canvas canvas, TimeSpan elapsedTimeSinceLastFrame);
 }
