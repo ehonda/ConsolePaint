@@ -33,14 +33,11 @@ public class LgbtFlagDemo
         IEnumerable<T> LeftShiftCyclically<T>(ImmutableArray<T> xs, int shift)
             => xs.Skip(xs.Length - shift).Concat(xs.Take(xs.Length - shift));
         
-        _pixels = Enumerable
-            .Repeat(Enumerable.Range(0, _canvas.Width), _canvas.Height)
-            .Zip(Enumerable.Range(0, _canvas.Height))
-            .SelectMany(tuple => tuple.First.Select(x => (X: x, Y: tuple.Second)))
+        _pixels = Generate
+            .FlattenedGrid(_canvas.Width, _canvas.Height)
             .Select(tuple => new OscillatingPixel(
                 tuple.X,
                 tuple.Y,
-                // states))
                 LeftShiftCyclically(states, tuple.Y)))
             .ToImmutableArray();
     }

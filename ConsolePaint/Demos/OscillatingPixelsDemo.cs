@@ -27,11 +27,8 @@ public class OscillatingPixelsDemo
 
         var statesInverted = states.Reverse().ToImmutableArray();
 
-        _pixels = Enumerable
-            .Range(0, 3)
-            .Zip(Enumerable
-                .Range(0, 3))
-            .Select(tuple => (X: tuple.First, Y: tuple.Second))
+        _pixels = Generate
+            .FlattenedGrid(_canvas.Width, _canvas.Height)
             .Select(tuple => new OscillatingPixel(
                 tuple.X,
                 tuple.Y,
