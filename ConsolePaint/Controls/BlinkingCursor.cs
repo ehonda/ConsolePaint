@@ -1,8 +1,10 @@
-﻿using Spectre.Console;
+﻿using ConsolePaint.Rendering;
+using Spectre.Console;
 
 namespace ConsolePaint.Controls;
 
-public class BlinkingCursor : Cursor, IRenderable
+public class BlinkingCursor : Cursor, IRenderable,
+    IRenderableToScreen<Color>, IRenderableToScreen<Text>
 {
     private readonly Color _onColor;
     private readonly TimedOscillator<EnumValuedTimedState<BlinkingCursorState>> _oscillator;
@@ -28,5 +30,17 @@ public class BlinkingCursor : Cursor, IRenderable
     {
         if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
             canvas.SetPixel(X, Y, _onColor);
+    }
+
+    public void Render(IScreen<Color> screen, TimeSpan elapsedTimeSinceLastFrame)
+    {
+        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+            screen.Draw(X, Y, _onColor);
+    }
+
+    public void Render(IScreen<Text> screen, TimeSpan elapsedTimeSinceLastFrame)
+    {
+        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+            screen.Draw(X, Y, new("@", new(_onColor)));
     }
 }

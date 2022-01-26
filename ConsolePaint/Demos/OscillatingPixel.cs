@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using ConsolePaint.Controls;
+using ConsolePaint.Rendering;
 using Spectre.Console;
 
 namespace ConsolePaint.Demos;

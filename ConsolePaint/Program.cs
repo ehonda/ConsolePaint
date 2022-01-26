@@ -5,9 +5,9 @@
 //     
 // await demo.Run();
 
-var demo = new OscillatingPixelsDemo();
-
-await demo.Run();
+// var demo = new OscillatingPixelsDemo();
+//
+// await demo.Run();
 
 // if (args.Length > 0 && int.TryParse(args.First(), out var ms) && ms >= 0)
 // {
@@ -19,3 +19,8 @@ await demo.Run();
 //     var demo = new LgbtFlagDemo();
 //     await demo.Run();
 // }
+
+var demo = new BlinkingCursorDemoWithColorScreen(20, 20,
+    TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
+    
+await demo.RunAsync();

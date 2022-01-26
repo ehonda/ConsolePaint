@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 
-namespace ConsolePaint.Controls;
+namespace ConsolePaint.Rendering;
 
 // TODO: Rename to not clash with Spectre.Console interface?
 // TODO: To better namespace

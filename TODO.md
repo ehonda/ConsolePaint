@@ -8,3 +8,4 @@ __TODO__
 * Tests for Blinking Cursor
 * InputHandler using InputQueue *-> not clear how to best do this yet*
 * Main loop *-> not clear how to best do this yet*
+* Better organization, better names, especially for the rendering stuff
