@@ -32,9 +32,10 @@ public class BlinkingCursorDemoWithTextScreen
             await Render(currentRender - lastRender);
             lastRender = currentRender;
             // ReSharper disable once MethodSupportsCancellation
-            await Task.Delay(TimeSpan.FromMilliseconds(1));
+            await Task.Delay(TimeSpan.FromMilliseconds(150));
         }
 
+        AnsiConsole.Clear();
         AnsiConsole.Cursor.Show();
         AnsiConsole.Reset();
     }

@@ -22,7 +22,8 @@ public class TextScreen : IScreen<Text>
     {
         _textures.Clear();
         foreach (var (x, y) in Generate.FlattenedGrid(_canvas.Width, _canvas.Height))
-            _canvas.SetPixel(x, y, Background);
+            // _canvas.SetPixel(x, y, Background);
+            _textures.Enqueue((x, y, new(" ", new(background: Background))));
     }
 
     public void Draw(int x, int y, Text input)
@@ -32,8 +33,9 @@ public class TextScreen : IScreen<Text>
 
     public void Render()
     {
-        AnsiConsole.Cursor.SetPosition(0, 0);
-        AnsiConsole.Write(_canvas);
+        // TODO: Try control codes to move the cursor?
+        // AnsiConsole.Cursor.SetPosition(0, 0);
+        // AnsiConsole.Write(_canvas);
         foreach (var (x, y, texture) in _textures)
         {
             AnsiConsole.Cursor.SetPosition(x, y);
