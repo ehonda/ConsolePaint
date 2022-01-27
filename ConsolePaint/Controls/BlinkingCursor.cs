@@ -41,6 +41,9 @@ public class BlinkingCursor : Cursor, IRenderable,
     public void Render(IScreen<Text> screen, TimeSpan elapsedTimeSinceLastFrame)
     {
         if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
-            screen.Draw(X, Y, new("@", new(_onColor)));
+        {
+            var background = (screen as TextScreen)?.Background;
+            screen.Draw(X, Y, new("@", new(_onColor, background)));
+        }
     }
 }
