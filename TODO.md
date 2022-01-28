@@ -1,6 +1,7 @@
 __TODO__
 
 * __Change `TextScreen` to non flickering version by implementing something like in non flickering demo__
+* Tests for all the screens / rendering related stuff
 * Tests for `ComparableExtensions`
 * Tests for Periodic version of covering
 * Guard against null in `FromIntervalLengths`

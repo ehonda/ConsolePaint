@@ -4,7 +4,7 @@ using Spectre.Console;
 namespace ConsolePaint.Controls;
 
 public class BlinkingCursor : Cursor, IRenderable,
-    IRenderableToScreen<Color>, IRenderableToScreen<Text>
+    IRenderableToScreen<Color>, IRenderableToScreen<Text>, IRenderableToScreen<(char Character, Style Style)>
 {
     private readonly Color _onColor;
     private readonly TimedOscillator<EnumValuedTimedState<BlinkingCursorState>> _oscillator;
@@ -44,6 +44,15 @@ public class BlinkingCursor : Cursor, IRenderable,
         {
             var background = (screen as TextScreen)?.Background;
             screen.Draw(X, Y, new("@", new(_onColor, background)));
+        }
+    }
+
+    public void Render(IScreen<(char Character, Style Style)> screen, TimeSpan elapsedTimeSinceLastFrame)
+    {
+        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+        {
+            var background = (screen as StyledAsciiScreen)?.Background;
+            screen.Draw(X, Y, new('@', new(_onColor, background)));
         }
     }
 }

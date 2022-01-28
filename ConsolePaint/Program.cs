@@ -30,8 +30,13 @@
 //     
 // await demo.RunAsync();
 
-var flickering = new FlickeringDemo();
-await flickering.RunAsync();
+var demo = new BlinkingCursorDemoWithStyledAsciiScreen(40, 20,
+    TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(1000));
+    
+await demo.RunAsync();
 
-var nonFlickering = new NonFlickeringDemo();
-await nonFlickering.RunAsync();
+// var flickering = new FlickeringDemo();
+// await flickering.RunAsync();
+//
+// var nonFlickering = new NonFlickeringDemo();
+// await nonFlickering.RunAsync();
