@@ -6,16 +6,22 @@ namespace ConsolePaint.Demos;
 
 public class BlinkingCursorDemoWithStyledAsciiScreen
 {
+    private readonly int _xLimit;
+    private readonly int _yLimit;
     private readonly BlinkingCursor _cursor;
     private readonly IScreen<(char Character, Style Style)> _screen;
+    
+    private readonly Color _background = Color.Gold3;
     
     private bool _running = true;
     
     public BlinkingCursorDemoWithStyledAsciiScreen(
         int xLimit, int yLimit, TimeSpan offFor, TimeSpan onFor)
     {
+        _xLimit = xLimit;
+        _yLimit = yLimit;
         _cursor = new(xLimit, yLimit, offFor, onFor, Color.Red3);
-        _screen = new StyledAsciiScreen(xLimit, yLimit, Color.Gold3);
+        _screen = new StyledAsciiScreen(xLimit, yLimit, _background);
     }
 
     public async Task RunAsync()
@@ -78,9 +84,26 @@ public class BlinkingCursorDemoWithStyledAsciiScreen
     private Task Render(TimeSpan elapsed)
     {
         _screen.DrawNewFrame();
+        RenderBushes();
         RenderCursor(elapsed);
         _screen.Render();
         return Task.CompletedTask;
+    }
+
+    private void RenderBushes()
+    {
+        var y = _yLimit / 2;
+
+        for (var x = 0; x < _xLimit; x++)
+        {
+            if (x % 2 == 0)
+            {
+                _screen.Draw(x, y, ('$', new(Color.Black, _background, Decoration.Underline | Decoration.Bold)));
+                continue;
+            }
+            
+            _screen.Draw(x, y, ('$', new(Color.Black, _background, Decoration.Strikethrough)));
+        }
     }
 
     private void RenderCursor(TimeSpan elapsed)
