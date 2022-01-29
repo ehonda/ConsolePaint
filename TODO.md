@@ -1,8 +1,6 @@
 __TODO__
 
-* __Change `TextScreen` to non flickering version by implementing something like in non flickering demo__
 * Tests for all the screens / rendering related stuff
-* Tests for `ComparableExtensions`
 * Tests for Periodic version of covering
 * Guard against null in `FromIntervalLengths`
 * Resolve `TODO` comments
@@ -12,3 +10,4 @@ __TODO__
 * Main loop *-> not clear how to best do this yet*
 * Better organization, better names, especially for the rendering stuff
 * Add Game Of Life demo
+* Add Console Paint demo
