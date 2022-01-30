@@ -1,75 +1,79 @@
 ﻿using CommandLine;
 using ConsolePaint.Demos;
 using ConsolePaint.IO;
-using Spectre.Console;
 
-// var demo = new BlinkingCursorDemo(25, 25,
-//     TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(1000));
-//     
-// await demo.Run();
+var parser = new Parser(settings =>
+{
+    settings.CaseInsensitiveEnumValues = true;
+});
 
-// var demo = new OscillatingPixelsDemo();
-//
-// await demo.Run();
+// TODO: Usage of command line parser with async does not work great here
+//          - WithParsedAsync not chainable so we need MapResult
+//          - Help is not displayed, exceptions are swallowed
+//          - How do we properly use this? https://github.com/commandlineparser/commandline/wiki
+await parser
+    .ParseArguments<
+        BlinkingCursorDemoOptions,
+        OscillatingPixelsDemoOptions,
+        LgbtFlagDemoOptions,
+        FlickeringDemoOptions>(args)
+    .MapResult(
+        async (BlinkingCursorDemoOptions options) => await RunBlinkingCursorDemoAsync(options),
+        async (OscillatingPixelsDemoOptions options) => await RunOscillatingPixelsDemoAsync(options),
+        async (LgbtFlagDemoOptions options) => await RunLgbtFlagDemoAsync(options),
+        async (FlickeringDemoOptions options) => await RunFlickeringDemoAsync(options),
+        async _ => await Task.CompletedTask);
 
-// if (args.Length > 0 && int.TryParse(args.First(), out var ms) && ms >= 0)
-// {
-//     var demo = new LgbtFlagDemo(TimeSpan.FromMilliseconds(ms));
-//     await demo.Run();
-// }
-// else
-// {
-//     var demo = new LgbtFlagDemo();
-//     await demo.Run();
-// }
+async Task RunBlinkingCursorDemoAsync(BlinkingCursorDemoOptions options)
+{
+    var w = options.Width;
+    var h = options.Height;
+    var offFor = TimeSpan.FromMilliseconds(options.OffForMilliseconds);
+    var onFor = TimeSpan.FromMilliseconds(options.OnForMilliseconds);
 
-// var demo = new BlinkingCursorDemoWithColorScreen(20, 20,
-//     TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
-//     
-// await demo.RunAsync();
-
-// var demo = new BlinkingCursorDemoWithTextScreen(20, 20,
-//     TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
-//     
-// await demo.RunAsync();
-
-// var demo = new BlinkingCursorDemoWithStyledAsciiScreen(40, 20,
-//     TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(1000));
-//     
-// await demo.RunAsync();
-
-// var flickering = new FlickeringDemo();
-// await flickering.RunAsync();
-//
-// var nonFlickering = new NonFlickeringDemo();
-// await nonFlickering.RunAsync();
-
-await Parser.Default
-    .ParseArguments<BlinkingCursorDemoOptions, object>(args)
-    .WithParsedAsync<BlinkingCursorDemoOptions>(async options =>
+    IBlinkingCursorDemo demo = options.Type switch
     {
-        var w = options.Width;
-        var h = options.Height;
-        var offFor = TimeSpan.FromMilliseconds(options.OffForMilliseconds);
-        var onFor = TimeSpan.FromMilliseconds(options.OnForMilliseconds);
+        BlinkingCursorDemoType.Plain => new BlinkingCursorDemo(
+            w, h, offFor, onFor),
 
-        IBlinkingCursorDemo demo = options.Type switch
-        {
-            BlinkingCursorDemoType.Plain => new BlinkingCursorDemo(
-                w, h, offFor, onFor),
+        BlinkingCursorDemoType.Color => new BlinkingCursorDemoWithColorScreen(
+            w, h, offFor, onFor),
 
-            BlinkingCursorDemoType.Color => new BlinkingCursorDemoWithColorScreen(
-                w, h, offFor, onFor),
+        BlinkingCursorDemoType.Text => new BlinkingCursorDemoWithTextScreen(
+            w, h, offFor, onFor),
 
-            BlinkingCursorDemoType.Text => new BlinkingCursorDemoWithTextScreen(
-                w, h, offFor, onFor),
+        BlinkingCursorDemoType.Ascii => new BlinkingCursorDemoWithStyledAsciiScreen(
+            w, h, offFor, onFor),
 
-            BlinkingCursorDemoType.Ascii => new BlinkingCursorDemoWithStyledAsciiScreen(
-                w, h, offFor, onFor),
-            
-            // TODO: Better exception
-            _ => throw new ArgumentException(nameof(options.Type))
-        };
+        // TODO: Better exception
+        _ => throw new ArgumentException(nameof(options.Type))
+    };
 
-        await demo.RunAsync();
-    });
+    await demo.RunAsync();
+}
+
+// ReSharper disable once UnusedParameter.Local
+async Task RunOscillatingPixelsDemoAsync(OscillatingPixelsDemoOptions _)
+{
+    var demo = new OscillatingPixelsDemo();
+    await demo.RunAsync();
+}
+
+async Task RunLgbtFlagDemoAsync(LgbtFlagDemoOptions options)
+{
+    var demo = new LgbtFlagDemo(TimeSpan.FromMilliseconds(options.DelayMilliseconds));
+    await demo.RunAsync();
+}
+
+async Task RunFlickeringDemoAsync(FlickeringDemoOptions options)
+{
+    if (options.Flicker)
+    {
+        var flickeringDemo = new FlickeringDemo();
+        await flickeringDemo.RunAsync();
+        return;
+    }
+
+    var oNonFlickeringDemo = new NonFlickeringDemo();
+    await oNonFlickeringDemo.RunAsync();
+}

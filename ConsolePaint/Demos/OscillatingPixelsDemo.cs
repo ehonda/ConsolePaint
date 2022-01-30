@@ -44,7 +44,7 @@ public class OscillatingPixelsDemo
         _screen = new CanvasScreen(Size, Size, Color.Black);
     }
 
-    public async Task Run()
+    public async Task RunAsync()
     {
         AnsiConsole.Clear();
         AnsiConsole.Cursor.Hide();

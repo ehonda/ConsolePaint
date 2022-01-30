@@ -50,7 +50,7 @@ public class LgbtFlagDemo
         _screen = new CanvasScreen(Width, Height, Color.Black);
     }
     
-    public async Task Run()
+    public async Task RunAsync()
     {
         AnsiConsole.Clear();
         AnsiConsole.Cursor.Hide();
