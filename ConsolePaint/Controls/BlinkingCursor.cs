@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace ConsolePaint.Controls;
 
-public class BlinkingCursor : Cursor, IRenderable,
+public class BlinkingCursor : Cursor,
     IRenderableToScreen<Color>, IRenderableToScreen<Text>, IRenderableToScreen<(char Character, Style Style)>
 {
     private readonly Color _onColor;

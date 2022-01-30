@@ -1,12 +1,17 @@
 ﻿using System.Collections.Immutable;
 using ConsolePaint.Math;
+using ConsolePaint.Rendering;
 using Spectre.Console;
 
 namespace ConsolePaint.Demos;
 
 public class LgbtFlagDemo
 {
-    private readonly Canvas _canvas = new(12, 6);
+    private const int Width = 2 * Height;
+
+    private const int Height = 6;
+    
+    private readonly IScreen<Color> _screen;
 
     private readonly ImmutableArray<OscillatingPixel> _pixels;
 
@@ -35,12 +40,14 @@ public class LgbtFlagDemo
             => xs.Skip(xs.Length - shift).Concat(xs.Take(xs.Length - shift));
         
         _pixels = Generate
-            .FlattenedGrid(_canvas.Width, _canvas.Height)
+            .FlattenedGrid(Width, Height)
             .Select(tuple => new OscillatingPixel(
                 tuple.X,
                 tuple.Y,
                 LeftShiftCyclically(states, tuple.Y)))
             .ToImmutableArray();
+
+        _screen = new CanvasScreen(Width, Height, Color.Black);
     }
     
     public async Task Run()
@@ -85,21 +92,14 @@ public class LgbtFlagDemo
     private Task Render(TimeSpan elapsed)
     {
         AnsiConsole.Cursor.SetPosition(0, 0);
-        DrawBackground();
+        _screen.DrawNewFrame();
         DrawPixels(elapsed);
-        AnsiConsole.Write(new Panel(_canvas).RoundedBorder().Header("Game"));
+        _screen.Render();
         return Task.CompletedTask;
     }
 
     private void DrawPixels(TimeSpan elapsed)
     {
-        foreach (var pixel in _pixels) pixel.Render(_canvas, elapsed);
-    }
-
-    private void DrawBackground()
-    {
-        for (var x = 0; x < _canvas.Width; x++)
-        for (var y = 0; y < _canvas.Height; y++)
-            _canvas.SetPixel(x, y, Color.Black);
+        foreach (var pixel in _pixels) pixel.Render(_screen, elapsed);
     }
 }

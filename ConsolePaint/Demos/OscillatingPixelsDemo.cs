@@ -1,12 +1,15 @@
 ﻿using System.Collections.Immutable;
 using ConsolePaint.Math;
+using ConsolePaint.Rendering;
 using Spectre.Console;
 
 namespace ConsolePaint.Demos;
 
 public class OscillatingPixelsDemo
 {
-    private readonly Canvas _canvas = new(3, 3);
+    private const int Size = 3;
+    
+    private readonly IScreen<Color> _screen;
 
     private readonly ImmutableArray<OscillatingPixel> _pixels;
 
@@ -29,7 +32,7 @@ public class OscillatingPixelsDemo
         var statesInverted = states.Reverse().ToImmutableArray();
 
         _pixels = Generate
-            .FlattenedGrid(_canvas.Width, _canvas.Height)
+            .FlattenedGrid(Size, Size)
             .Select(tuple => new OscillatingPixel(
                 tuple.X,
                 tuple.Y,
@@ -37,6 +40,8 @@ public class OscillatingPixelsDemo
                     ? states
                     : statesInverted))
             .ToImmutableArray();
+
+        _screen = new CanvasScreen(Size, Size, Color.Black);
     }
 
     public async Task Run()
@@ -81,21 +86,14 @@ public class OscillatingPixelsDemo
     private Task Render(TimeSpan elapsed)
     {
         AnsiConsole.Cursor.SetPosition(0, 0);
-        DrawBackground();
+        _screen.DrawNewFrame();
         DrawPixels(elapsed);
-        AnsiConsole.Write(new Panel(_canvas).RoundedBorder().Header("Game"));
+        _screen.Render();
         return Task.CompletedTask;
     }
 
     private void DrawPixels(TimeSpan elapsed)
     {
-        foreach (var pixel in _pixels) pixel.Render(_canvas, elapsed);
-    }
-
-    private void DrawBackground()
-    {
-        for (var x = 0; x < _canvas.Width; x++)
-        for (var y = 0; y < _canvas.Height; y++)
-            _canvas.SetPixel(x, y, Color.Black);
+        foreach (var pixel in _pixels) pixel.Render(_screen, elapsed);
     }
 }

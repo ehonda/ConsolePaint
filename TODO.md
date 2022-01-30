@@ -1,6 +1,7 @@
 __TODO__
 
 * Tests for all the screens / rendering related stuff
+* Make screens composable
 * Tests for Periodic version of covering
 * Guard against null in `FromIntervalLengths`
 * Resolve `TODO` comments

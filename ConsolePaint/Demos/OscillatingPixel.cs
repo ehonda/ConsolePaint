@@ -5,7 +5,7 @@ using Spectre.Console;
 
 namespace ConsolePaint.Demos;
 
-public class OscillatingPixel : IRenderable
+public class OscillatingPixel : IRenderableToScreen<Color>
 {
     private readonly int _x;
     private readonly int _y;
@@ -23,8 +23,8 @@ public class OscillatingPixel : IRenderable
         _oscillator = new(states);
     }
 
-    public void Render(Canvas canvas, TimeSpan elapsedTimeSinceLastFrame)
+    public void Render(IScreen<Color> screen, TimeSpan elapsedTimeSinceLastFrame)
     {
-        canvas.SetPixel(_x, _y, _oscillator.Step(elapsedTimeSinceLastFrame).Color);
+        screen.Draw(_x, _y, _oscillator.Step(elapsedTimeSinceLastFrame).Color);
     }
 }
