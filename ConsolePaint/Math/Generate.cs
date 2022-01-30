@@ -1,6 +1,5 @@
-﻿namespace ConsolePaint.Demos;
+﻿namespace ConsolePaint.Math;
 
-// TODO: Better name
 public static class Generate
 {
     public static IEnumerable<(int X, int Y)> FlattenedGrid(int xLimit, int yLimit)

@@ -1,4 +1,5 @@
 ﻿using ConsolePaint.Demos;
+using ConsolePaint.Math;
 using Spectre.Console;
 
 namespace ConsolePaint.Rendering;
