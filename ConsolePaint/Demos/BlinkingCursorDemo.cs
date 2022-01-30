@@ -4,7 +4,7 @@ using Spectre.Console;
 namespace ConsolePaint.Demos;
 
 // TODO: Add input queue
-public class BlinkingCursorDemo
+public class BlinkingCursorDemo : IBlinkingCursorDemo
 {
     private readonly BlinkingCursor _cursor;
     private readonly Canvas _canvas;
@@ -19,7 +19,7 @@ public class BlinkingCursorDemo
         _canvas = new(xLimit, yLimit);
     }
 
-    public async Task Run()
+    public async Task RunAsync()
     {
         AnsiConsole.Clear();
         AnsiConsole.Cursor.Hide();

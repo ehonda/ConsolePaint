@@ -4,7 +4,7 @@ using Spectre.Console;
 
 namespace ConsolePaint.Demos;
 
-public class BlinkingCursorDemoWithColorScreen
+public class BlinkingCursorDemoWithColorScreen : IBlinkingCursorDemo
 {
     private readonly BlinkingCursor _cursor;
     private readonly IScreen<Color> _screen;
