@@ -14,18 +14,19 @@ public static class CoveringByDisjointIntervals
         TElement start, Func<TElement, TElement, TElement> addElements, IEnumerable<TElement> lengths)
         where TElement : IComparable, IComparable<TElement>
     {
-        // TODO: Can we use IEnumerable here instead of List?
-        var starts = lengths
+        var boundaryPoints = lengths
             .Aggregate(
-                new List<TElement> { start },
-                (starts, length) =>
+                (BoundaryPoints: Enumerable.Repeat(start, 1), LastBoundaryPoint: start),
+                (accumulator, length) =>
                 {
-                    starts.Add(addElements(starts.Last(), length));
-                    return starts;
-                });
+                    var nextBoundaryPoint = addElements(accumulator.LastBoundaryPoint, length);
+                    return (accumulator.BoundaryPoints.Append(nextBoundaryPoint), nextBoundaryPoint);
+                })
+            .BoundaryPoints
+            .ToImmutableArray();
 
-        var intervals = starts
-            .Zip(starts.Skip(1))
+        var intervals = boundaryPoints
+            .Zip(boundaryPoints.Skip(1))
             .Select(tuple => (Start: tuple.First, End: tuple.Second))
             .ToImmutableArray();
 
