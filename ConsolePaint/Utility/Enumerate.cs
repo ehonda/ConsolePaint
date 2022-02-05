@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using Ardalis.GuardClauses;
 
 // TODO: Better namespace
@@ -14,25 +15,29 @@ public static class Enumerate
     
     public static TOutput AndApplyGuardingAgainstNull<TOutput, TElement>(
         IEnumerable<TElement> elements,
-        Func<ImmutableArray<TElement>, TOutput> function)
+        Func<ImmutableArray<TElement>, TOutput> function,
+        [CallerArgumentExpression("elements")] string? parameterName = null)
     {
         // ReSharper disable once ConstantConditionalAccessQualifier
         var elementsEnumerated = elements?.ToImmutableArray();
 
-        Guard.Against.Null(elementsEnumerated);
+        Guard.Against.Null(elementsEnumerated, parameterName);
 
         return function(elementsEnumerated.Value);
     }
 
     public static TOutput AndApplyGuardingAgainstNullOrEmpty<TOutput, TElement>(
         IEnumerable<TElement> elements,
-        Func<ImmutableArray<TElement>, TOutput> transformation)
+        Func<ImmutableArray<TElement>, TOutput> function,
+        [CallerArgumentExpression("elements")] string? parameterName = null)
     {
         // ReSharper disable once ConstantConditionalAccessQualifier
         var elementsEnumerated = elements?.ToImmutableArray();
 
-        Guard.Against.NullOrEmpty(elementsEnumerated as IEnumerable<TElement>, nameof(elements));
+        Guard.Against.NullOrEmpty(
+            elementsEnumerated as IEnumerable<TElement>,
+            parameterName ?? nameof(elements));
 
-        return transformation(elementsEnumerated.Value);
+        return function(elementsEnumerated.Value);
     }
 }

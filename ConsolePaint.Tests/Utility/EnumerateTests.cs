@@ -29,7 +29,7 @@ public class EnumerateTests
             null! as IEnumerable<int>,
             _ => 1);
 
-        transformation.Should().Throw<ArgumentException>().WithMessage("*elements*");
+        transformation.Should().Throw<ArgumentException>();
     }
 
     [Test]
@@ -50,7 +50,7 @@ public class EnumerateTests
             null! as IEnumerable<int>,
             _ => 1);
 
-        transformation.Should().Throw<ArgumentException>().WithMessage("*elements*");
+        transformation.Should().Throw<ArgumentException>();
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class EnumerateTests
             Enumerable.Empty<int>(),
             _ => 1);
 
-        transformation.Should().Throw<ArgumentException>().WithMessage("*elements*");
+        transformation.Should().Throw<ArgumentException>();
     }
 
     [Test]
