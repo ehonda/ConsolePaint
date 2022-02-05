@@ -4,23 +4,27 @@ using Ardalis.GuardClauses;
 // TODO: Better namespace
 namespace ConsolePaint.Utility;
 
-// TODO: Better names!
-// TODO: As extension on IEnumerable<T>?
-public static class With
+// TODO: Could this be realized as some sort of fluent / builder syntax?
+public static class Enumerate
 {
-    public static TOutput NotNullAndEnumerated<TOutput, TElement>(
+    public static TOutput AndApply<TOutput, TElement>(
         IEnumerable<TElement> elements,
-        Func<ImmutableArray<TElement>, TOutput> transformation)
+        Func<ImmutableArray<TElement>, TOutput> function)
+        => function(elements.ToImmutableArray());
+    
+    public static TOutput AndApplyGuardingAgainstNull<TOutput, TElement>(
+        IEnumerable<TElement> elements,
+        Func<ImmutableArray<TElement>, TOutput> function)
     {
         // ReSharper disable once ConstantConditionalAccessQualifier
         var elementsEnumerated = elements?.ToImmutableArray();
 
         Guard.Against.Null(elementsEnumerated);
 
-        return transformation(elementsEnumerated.Value);
+        return function(elementsEnumerated.Value);
     }
 
-    public static TOutput NotNullOrEmptyAndEnumerated<TOutput, TElement>(
+    public static TOutput AndApplyGuardingAgainstNullOrEmpty<TOutput, TElement>(
         IEnumerable<TElement> elements,
         Func<ImmutableArray<TElement>, TOutput> transformation)
     {

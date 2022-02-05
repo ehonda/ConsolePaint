@@ -7,11 +7,11 @@ using NUnit.Framework;
 
 namespace ConsolePaint.Tests.Utility;
 
-public class WithTests
+public class EnumerateTests
 {
     private int _nextEnumeratedSingleValue;
 
-    private IEnumerable<int> EnumeratesDifferentlyEachTime
+    private IEnumerable<int> DifferentSingleValueOnEachEnumeration
     {
         get { yield return _nextEnumeratedSingleValue++; }
     }
@@ -23,9 +23,9 @@ public class WithTests
     }
 
     [Test]
-    public void NotNullAndEnumerated_guards_against_null()
+    public void AndApplyGuardingAgainstNull_guards_against_null()
     {
-        var transformation = () => With.NotNullAndEnumerated(
+        var transformation = () => Enumerate.AndApplyGuardingAgainstNull(
             null! as IEnumerable<int>,
             _ => 1);
 
@@ -33,20 +33,20 @@ public class WithTests
     }
 
     [Test]
-    public void NotNullAndEnumerated_enumerates_elements_exactly_once()
+    public void AndApplyGuardingAgainstNull_enumerates_elements_exactly_once()
     {
         var expectedSingleValue = _nextEnumeratedSingleValue;
 
-        With.NotNullAndEnumerated(
-                EnumeratesDifferentlyEachTime,
+        Enumerate.AndApplyGuardingAgainstNull(
+                DifferentSingleValueOnEachEnumeration,
                 xs => xs.Single())
             .Should().Be(expectedSingleValue);
     }
 
     [Test]
-    public void NotNullOrEmptyAndEnumerated_guards_against_null()
+    public void AndApplyGuardingAgainstNullOrEmpty_guards_against_null()
     {
-        var transformation = () => With.NotNullOrEmptyAndEnumerated(
+        var transformation = () => Enumerate.AndApplyGuardingAgainstNullOrEmpty(
             null! as IEnumerable<int>,
             _ => 1);
 
@@ -54,9 +54,9 @@ public class WithTests
     }
 
     [Test]
-    public void NotNullOrEmptyAndEnumerated_guards_against_empty()
+    public void AndApplyGuardingAgainstNullOrEmpty_guards_against_empty()
     {
-        var transformation = () => With.NotNullOrEmptyAndEnumerated(
+        var transformation = () => Enumerate.AndApplyGuardingAgainstNullOrEmpty(
             Enumerable.Empty<int>(),
             _ => 1);
 
@@ -64,12 +64,12 @@ public class WithTests
     }
 
     [Test]
-    public void NotNullOrEmptyAndEnumerated_enumerates_elements_exactly_once()
+    public void AndApplyGuardingAgainstNullOrEmpty_enumerates_elements_exactly_once()
     {
         var expectedSingleValue = _nextEnumeratedSingleValue;
 
-        With.NotNullOrEmptyAndEnumerated(
-                EnumeratesDifferentlyEachTime,
+        Enumerate.AndApplyGuardingAgainstNullOrEmpty(
+                DifferentSingleValueOnEachEnumeration,
                 xs => xs.Single())
             .Should().Be(expectedSingleValue);
     }
