@@ -40,4 +40,23 @@ public static class Enumerate
 
         return function(elementsEnumerated.Value);
     }
+
+    // TODO: Test AndDo-Versions
+    public static void AndDoGuardingAgainstNull<TElement>(
+        IEnumerable<TElement> elements,
+        Action<ImmutableArray<TElement>> action,
+        [CallerArgumentExpression("elements")] string? parameterName = null)
+        => AndApplyGuardingAgainstNull(
+            elements,
+            action.AsFunction(),
+            parameterName);
+    
+    public static void AndDoGuardingAgainstNullOrEmpty<TElement>(
+        IEnumerable<TElement> elements,
+        Action<ImmutableArray<TElement>> action,
+        [CallerArgumentExpression("elements")] string? parameterName = null)
+        => AndApplyGuardingAgainstNullOrEmpty(
+            elements,
+            action.AsFunction(),
+            parameterName);
 }

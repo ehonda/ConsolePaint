@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Ardalis.GuardClauses;
 using ConsolePaint.Math.Extensions;
+using ConsolePaint.Utility;
 
 namespace ConsolePaint.Math;
 
@@ -17,31 +18,30 @@ public class CoveringByDisjointIntervals<TElement> : ICoveringByDisjointInterval
 
     public CoveringByDisjointIntervals(IEnumerable<(TElement Start, TElement End)> intervals)
     {
-        // TODO: More elegant guarding
-        // TODO: Does this cause multi enumeration?
-        // ReSharper disable once PossibleMultipleEnumeration
-        Guard.Against.Null(intervals, nameof(intervals));
+        _covering = Enumerate.AndApplyGuardingAgainstNullOrEmpty(
+            intervals,
+            // ReSharper disable once VariableHidesOuterVariable
+            intervals =>
+            {
+                if (intervals.Any(interval => interval.Start.IsGreaterThanOrEqualTo(interval.End)))
+                    throw new InvalidOperationException(
+                        "Can't construct covering by disjoint intervals from intervals with start lower than or equal to end");
 
-        // ReSharper disable once PossibleMultipleEnumeration
-        var intervalsEnumerated = intervals.ToImmutableArray();
+                var covering = intervals
+                    .OrderBy(tuple => tuple.Start)
+                    .Select((tuple, index) => (Interval: (tuple.Start, tuple.End), Index: index))
+                    .ToImmutableArray();
 
-        if (intervalsEnumerated.Any(interval => interval.Start.IsGreaterThanOrEqualTo(interval.End)))
-            throw new InvalidOperationException(
-                "Can't construct covering by disjoint intervals from intervals with start lower than or equal to end");
+                var endsWithNextStarts = covering
+                    .Zip(covering.Skip(1))
+                    .Select(tuple => (tuple.First.Interval.End, NextStart: tuple.Second.Interval.Start));
 
-        Guard.Against.NullOrEmpty(intervalsEnumerated, nameof(intervals));
-        _covering = intervalsEnumerated
-            .OrderBy(tuple => tuple.Start)
-            .Select((tuple, index) => ((tuple.Start, tuple.End), index))
-            .ToImmutableArray();
+                if (endsWithNextStarts.Any(tuple => tuple.End.IsEqualTo(tuple.NextStart) is false))
+                    throw new InvalidOperationException(
+                        "Can't construct covering by disjoint intervals from discontinuous intervals");
 
-        var endsWithNextStarts = _covering
-            .Zip(_covering.Skip(1))
-            .Select(tuple => (tuple.First.Interval.End, NextStart: tuple.Second.Interval.Start));
-
-        if (endsWithNextStarts.Any(tuple => tuple.End.IsEqualTo(tuple.NextStart) is false))
-            throw new InvalidOperationException(
-                "Can't construct covering by disjoint intervals from discontinuous intervals");
+                return covering;
+            });
     }
 
     public TElement Start => _covering.First().Interval.Start;
