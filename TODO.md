@@ -12,6 +12,7 @@ __TODO__
 * Better organization, better names, especially for the rendering stuff
 * Add Game Of Life demo
 * Add Console Paint demo
+* Better names for Utility / With (and the functions~~~~)
 
 __PLAN__
 
