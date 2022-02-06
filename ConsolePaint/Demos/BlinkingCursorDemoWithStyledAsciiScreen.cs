@@ -1,4 +1,5 @@
 ﻿using ConsolePaint.Controls;
+using ConsolePaint.Controls.Input;
 using ConsolePaint.Rendering;
 using Spectre.Console;
 
@@ -14,7 +15,9 @@ public class BlinkingCursorDemoWithStyledAsciiScreen : IBlinkingCursorDemo
     private readonly Color _background = Color.Gold3;
     
     private bool _running = true;
-    
+
+    private readonly IInputHandler<ConsoleKey> _inputHandler;
+
     public BlinkingCursorDemoWithStyledAsciiScreen(
         int xLimit, int yLimit, TimeSpan offFor, TimeSpan onFor)
     {
@@ -22,6 +25,11 @@ public class BlinkingCursorDemoWithStyledAsciiScreen : IBlinkingCursorDemo
         _yLimit = yLimit;
         _cursor = new(xLimit, yLimit, offFor, onFor, Color.Red3);
         _screen = new StyledAsciiScreen(xLimit, yLimit, _background);
+        _inputHandler = new AggregateInputHandler(new IInputHandler<ConsoleKey>[]
+        {
+            new EscapeInputHandler(() => _running = false),
+            new CursorInputHandler(_cursor)
+        });
     }
 
     public async Task RunAsync()
@@ -55,29 +63,7 @@ public class BlinkingCursorDemoWithStyledAsciiScreen : IBlinkingCursorDemo
             if (input is null)
                 return;
 
-            var key = input.Value.Key;
-            switch (key)
-            {
-                case ConsoleKey.Escape:
-                    _running = false;
-                    break;
-                
-                case ConsoleKey.UpArrow:
-                    _cursor.Move(Direction.Down);
-                    break;
-                
-                case ConsoleKey.DownArrow:
-                    _cursor.Move(Direction.Up);
-                    break;
-                
-                case ConsoleKey.RightArrow:
-                    _cursor.Move(Direction.Right);
-                    break;
-                
-                case ConsoleKey.LeftArrow:
-                    _cursor.Move(Direction.Left);
-                    break;
-            }
+            await _inputHandler.HandleInputAsync(input.Value.Key);
         }
     }
 

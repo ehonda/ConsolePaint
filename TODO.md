@@ -2,6 +2,9 @@ __NEXT__
 
 * Pass time since beginning to renderable (See TODO in oscillator.Step)
 * Extract main loop into class, refactor demos to use it
+  * Need to extract input processing for that *-> Implement `IInputHandler`*
+  * Inject Console in game class for testability
+  * Inject stopwatch
 
 __TODO__
 
