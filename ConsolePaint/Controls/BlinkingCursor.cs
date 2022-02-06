@@ -38,6 +38,12 @@ public class BlinkingCursor : Cursor,
             screen.Draw(X, Y, _onColor);
     }
 
+    public void RenderWithCurrentTime(IScreen<Color> screen, TimeSpan currentTime)
+    {
+        if (_oscillator.StateAt(currentTime).Value is BlinkingCursorState.On)
+            screen.Draw(X, Y, _onColor);
+    }
+
     public void Render(IScreen<Text> screen, TimeSpan currentTime)
     {
         if (_oscillator.Step(currentTime).Value is BlinkingCursorState.On)
@@ -47,9 +53,27 @@ public class BlinkingCursor : Cursor,
         }
     }
 
+    public void RenderWithCurrentTime(IScreen<Text> screen, TimeSpan currentTime)
+    {
+        if (_oscillator.StateAt(currentTime).Value is BlinkingCursorState.On)
+        {
+            var background = (screen as TextScreen)?.Background;
+            screen.Draw(X, Y, new("@", new(_onColor, background)));
+        }
+    }
+
     public void Render(IScreen<(char Character, Style Style)> screen, TimeSpan currentTime)
     {
         if (_oscillator.Step(currentTime).Value is BlinkingCursorState.On)
+        {
+            var background = (screen as StyledAsciiScreen)?.Background;
+            screen.Draw(X, Y, new('@', new(_onColor, background)));
+        }
+    }
+
+    public void RenderWithCurrentTime(IScreen<(char Character, Style Style)> screen, TimeSpan currentTime)
+    {
+        if (_oscillator.StateAt(currentTime).Value is BlinkingCursorState.On)
         {
             var background = (screen as StyledAsciiScreen)?.Background;
             screen.Draw(X, Y, new('@', new(_onColor, background)));

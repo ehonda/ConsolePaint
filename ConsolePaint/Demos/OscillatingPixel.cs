@@ -27,4 +27,9 @@ public class OscillatingPixel : IRenderableToScreen<Color>
     {
         screen.Draw(_x, _y, _oscillator.Step(currentTime).Color);
     }
+
+    public void RenderWithCurrentTime(IScreen<Color> screen, TimeSpan currentTime)
+    {
+        screen.Draw(_x, _y, _oscillator.StateAt(currentTime).Color);
+    }
 }
