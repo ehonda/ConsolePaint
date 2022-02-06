@@ -30,8 +30,8 @@ public class TimedOscillatorTests
         var stateB = Fluent.NamedTimedState.Lasting(3).WithName("B").Create();
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB);
-
-        oscillator.Step(elapsed).Should().Be(stateA);
+        
+        oscillator.StateAt(elapsed).Should().Be(stateA);
     }
 
     [Test]
@@ -41,11 +41,12 @@ public class TimedOscillatorTests
         var stateB = Fluent.NamedTimedState.Lasting(3).WithName("B").Create();
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB);
+        
+        oscillator.StateAt(TimeSpan.FromTicks(0)).Should().Be(stateA);
+        oscillator.StateAt(TimeSpan.FromTicks(4)).Should().Be(stateB);
+        oscillator.StateAt(TimeSpan.FromTicks(8)).Should().Be(stateA);
+        oscillator.StateAt(TimeSpan.FromTicks(11)).Should().Be(stateB);
 
-        oscillator.Step(TimeSpan.FromTicks(0)).Should().Be(stateA);
-        oscillator.Step(TimeSpan.FromTicks(4)).Should().Be(stateB);
-        oscillator.Step(TimeSpan.FromTicks(4)).Should().Be(stateA);
-        oscillator.Step(TimeSpan.FromTicks(3)).Should().Be(stateB);
     }
     
     [Test]
@@ -56,8 +57,8 @@ public class TimedOscillatorTests
         var stateC = Fluent.NamedTimedState.Lasting(3).WithName("C").Create();
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB, stateC);
-
-        oscillator.Step(TimeSpan.FromTicks(7)).Should().Be(stateC);
+        
+        oscillator.StateAt(TimeSpan.FromTicks(7)).Should().Be(stateC);
     }
     
     [Test]
@@ -69,7 +70,7 @@ public class TimedOscillatorTests
         var stateD = Fluent.NamedTimedState.Lasting(3).WithName("D").Create();
         
         var oscillator = new TimedOscillator<NamedTimedState>(stateA, stateB, stateC, stateD);
-
-        oscillator.Step(TimeSpan.FromTicks(19)).Should().Be(stateC);
+        
+        oscillator.StateAt(TimeSpan.FromTicks(19)).Should().Be(stateC);
     }
 }
