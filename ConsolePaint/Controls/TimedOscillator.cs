@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using ConsolePaint.Math;
+using ConsolePaint.Utility;
 
 namespace ConsolePaint.Controls;
 
@@ -9,34 +10,41 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
 
     private readonly ImmutableArray<TTimedState> _states;
 
+    // TODO: Remove
     private int _currentStateIndex;
 
     // TODO: Do we really want / need to save time passed since beginning?
     private TimeSpan _timePassed = TimeSpan.Zero;
 
-    // TODO:
+    // TODO: Remove
     public TTimedState CurrentState => _states[_currentStateIndex];
 
     public TimedOscillator(params TTimedState[] states)
-        : this(states.ToImmutableArray())
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        : this(states?.ToImmutableArray()!)
     {
     }
 
+    // TODO: Test guarding against null / empty states
     public TimedOscillator(IEnumerable<TTimedState> states)
-    {
-        _states = states.ToImmutableArray();
+        => (_states, _covering) = Enumerate.AndApplyGuardingAgainstNullOrEmpty(
+            states,
+            // ReSharper disable once VariableHidesOuterVariable
+            states =>
+            {
+                var covering = CoveringByDisjointIntervals.FromIntervalLengths(
+                    TimeSpan.Zero,
+                    (t, s) => t + s,
+                    states.Select(state => state.LastsFor));
 
-        var covering = CoveringByDisjointIntervals.FromIntervalLengths(
-            TimeSpan.Zero,
-            (t, s) => t + s,
-            _states.Select(state => state.LastsFor));
+                var periodicCovering = new PeriodicCoveringByDisjointIntervals<TimeSpan>(
+                    covering,
+                    (t, s) => t - s,
+                    (t, s) => t / s,
+                    (d, t) => d * t);
 
-        _covering = new PeriodicCoveringByDisjointIntervals<TimeSpan>(
-            covering,
-            (t, s) => t - s,
-            (t, s) => t / s,
-            (d, t) => d * t);
-    }
+                return (states, periodicCovering);
+            });
     
     // TODO: Do we want to pass time since simulation started instead?
     
@@ -50,4 +58,7 @@ public class TimedOscillator<TTimedState> where TTimedState : TimedState
 
         return CurrentState;
     }
+
+    public TTimedState StateAt(TimeSpan time)
+        => _states[_covering.GetCover(time).Index];
 }

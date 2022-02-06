@@ -23,8 +23,8 @@ public class OscillatingPixel : IRenderableToScreen<Color>
         _oscillator = new(states);
     }
 
-    public void Render(IScreen<Color> screen, TimeSpan elapsedTimeSinceLastFrame)
+    public void Render(IScreen<Color> screen, TimeSpan currentTime)
     {
-        screen.Draw(_x, _y, _oscillator.Step(elapsedTimeSinceLastFrame).Color);
+        screen.Draw(_x, _y, _oscillator.Step(currentTime).Color);
     }
 }

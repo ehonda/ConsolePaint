@@ -26,30 +26,30 @@ public class BlinkingCursor : Cursor,
     {
     }
 
-    public void Render(Canvas canvas, TimeSpan elapsedTimeSinceLastFrame)
+    public void Render(Canvas canvas, TimeSpan currentTime)
     {
-        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+        if (_oscillator.Step(currentTime).Value is BlinkingCursorState.On)
             canvas.SetPixel(X, Y, _onColor);
     }
 
-    public void Render(IScreen<Color> screen, TimeSpan elapsedTimeSinceLastFrame)
+    public void Render(IScreen<Color> screen, TimeSpan currentTime)
     {
-        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+        if (_oscillator.Step(currentTime).Value is BlinkingCursorState.On)
             screen.Draw(X, Y, _onColor);
     }
 
-    public void Render(IScreen<Text> screen, TimeSpan elapsedTimeSinceLastFrame)
+    public void Render(IScreen<Text> screen, TimeSpan currentTime)
     {
-        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+        if (_oscillator.Step(currentTime).Value is BlinkingCursorState.On)
         {
             var background = (screen as TextScreen)?.Background;
             screen.Draw(X, Y, new("@", new(_onColor, background)));
         }
     }
 
-    public void Render(IScreen<(char Character, Style Style)> screen, TimeSpan elapsedTimeSinceLastFrame)
+    public void Render(IScreen<(char Character, Style Style)> screen, TimeSpan currentTime)
     {
-        if (_oscillator.Step(elapsedTimeSinceLastFrame).Value is BlinkingCursorState.On)
+        if (_oscillator.Step(currentTime).Value is BlinkingCursorState.On)
         {
             var background = (screen as StyledAsciiScreen)?.Background;
             screen.Draw(X, Y, new('@', new(_onColor, background)));
