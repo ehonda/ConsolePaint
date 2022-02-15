@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using ConsolePaint.Controls.Input;
 using Spectre.Console;
 
 namespace ConsolePaint.Controls.GameLoops;
@@ -6,14 +7,22 @@ namespace ConsolePaint.Controls.GameLoops;
 public abstract class GameLoop : IGameLoop
 {
     private readonly IAnsiConsole _console;
+    private readonly IInputReader<IAnsiConsole, ConsoleKeyInfo> _inputReader;
+    private readonly IInputHandler<ConsoleKeyInfo> _inputHandler;
+    private readonly IGameState _gameState;
     private readonly Stopwatch _stopwatch = new();
 
-    private bool _running = true;
-    
     // TODO: Inject interface for stopwatch
-    protected GameLoop(IAnsiConsole console)
+    protected GameLoop(
+        IAnsiConsole console,
+        IInputReader<IAnsiConsole, ConsoleKeyInfo> inputReader,
+        IInputHandler<ConsoleKeyInfo> inputHandler,
+        IGameState gameState)
     {
         _console = console;
+        _inputReader = inputReader;
+        _inputHandler = inputHandler;
+        _gameState = gameState;
     }
     
     public async Task RunAsync()
@@ -29,7 +38,7 @@ public abstract class GameLoop : IGameLoop
     private async Task RunGameLoopAsync()
     {
         _stopwatch.Start();
-        while (_running)
+        while (_gameState.Running)
         {
             await ProcessInputAsync();
             await RenderAsync(_stopwatch.Elapsed);
@@ -38,8 +47,12 @@ public abstract class GameLoop : IGameLoop
         _stopwatch.Stop();
     }
 
-    // TODO: Implement reading key from console
-    protected abstract Task ProcessInputAsync();
-    
+    private async Task ProcessInputAsync()
+    {
+        var (success, input) = await _inputReader.TryReadInputAsync(_console);
+        if (success)
+            await _inputHandler.HandleInputAsync(input);
+    }
+
     protected abstract Task RenderAsync(TimeSpan currentTime);
 }

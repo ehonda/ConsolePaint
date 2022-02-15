@@ -8,5 +8,7 @@ public enum BlinkingCursorDemoType
     
     Text,
     
-    Ascii
+    Ascii,
+    
+    GameLoop
 }

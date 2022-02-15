@@ -44,6 +44,9 @@ async Task RunBlinkingCursorDemoAsync(BlinkingCursorDemoOptions options)
 
         BlinkingCursorDemoType.Ascii => new BlinkingCursorDemoWithStyledAsciiScreen(
             w, h, offFor, onFor),
+        
+        BlinkingCursorDemoType.GameLoop => GameLoopDemo.Create(
+            w, h, offFor, onFor),
 
         // TODO: Better exception
         _ => throw new ArgumentException(nameof(options.Type))
